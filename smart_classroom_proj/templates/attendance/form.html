@@ -1,0 +1,26 @@
+{% extends 'attendance/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h2 class="mb-4">{{ title }}</h2>
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Save</button>
+            <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+<style>
+    input, select, textarea { 
+        width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 6px;
+    }
+</style>
+{% endblock %}

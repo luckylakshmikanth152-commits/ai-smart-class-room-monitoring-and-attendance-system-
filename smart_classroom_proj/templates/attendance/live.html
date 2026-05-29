@@ -1,0 +1,36 @@
+{% extends 'attendance/base.html' %}
+{% block title %}Live Monitor{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Live Classroom Monitor</h2>
+    <div>
+        <a href="?behaviour=0" class="btn btn-outline-primary {% if not behaviour %}active{% endif %}">
+            <i class="bi bi-person-check"></i> Face Recognition Only
+        </a>
+        <a href="?behaviour=1" class="btn btn-outline-warning {% if behaviour %}active{% endif %}">
+            <i class="bi bi-eye"></i> + Behaviour Detection
+        </a>
+        <button onclick="stopCam()" class="btn btn-danger"><i class="bi bi-stop-circle"></i> Stop</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body text-center bg-dark p-2">
+        <img id="feed" src="{% url 'video_feed' %}?behaviour={{ behaviour|yesno:'1,0' }}"
+             style="max-width:100%; border-radius: 8px;" />
+    </div>
+</div>
+
+<div class="alert alert-info mt-3">
+    <strong>How it works:</strong> The webcam captures live video; recognized students/faculty
+    are auto-marked attended for the current scheduled class. Behaviour mode also detects
+    phone usage and inattentiveness. Make sure students are added with clear face photos first.
+</div>
+
+<script>
+function stopCam() {
+    document.getElementById('feed').src = '';
+    fetch("{% url 'stop_camera' %}").then(() => alert('Camera released.'));
+}
+</script>
+{% endblock %}

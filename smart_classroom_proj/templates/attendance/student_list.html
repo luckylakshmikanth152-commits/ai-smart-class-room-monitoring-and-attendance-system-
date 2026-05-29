@@ -1,0 +1,36 @@
+{% extends 'attendance/base.html' %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Students ({{ students.count }})</h2>
+    <a href="{% url 'student_add' %}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Student</a>
+</div>
+
+<div class="card">
+    <table class="table table-hover mb-0">
+        <thead class="table-dark">
+            <tr><th>Photo</th><th>Roll No</th><th>Name</th><th>Department</th><th>Sec</th><th>Sem</th><th>Email</th><th>Encoded?</th><th></th></tr>
+        </thead>
+        <tbody>
+        {% for s in students %}
+            <tr>
+                <td>{% if s.photo %}<img src="{{ s.photo.url }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">{% endif %}</td>
+                <td>{{ s.roll_number }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.department.name }}</td>
+                <td>{{ s.section }}</td>
+                <td>{{ s.semester }}</td>
+                <td>{{ s.email }}</td>
+                <td>{% if s.face_encoding %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
+                <td>
+                    <a href="{% url 'student_delete' s.pk %}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete {{ s.name }}?')"><i class="bi bi-trash"></i></a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="9" class="text-center text-muted p-4">No students yet. Click "Add Student".</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

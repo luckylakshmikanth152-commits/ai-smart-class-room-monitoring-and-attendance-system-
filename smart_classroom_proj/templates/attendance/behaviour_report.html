@@ -1,0 +1,61 @@
+{% extends 'attendance/base.html' %}
+{% block title %}Behaviour Report{% endblock %}
+{% block content %}
+<h2 class="mb-3">Behaviour Analysis Report</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header"><strong>Summary</strong></div>
+            <div class="card-body">
+                <canvas id="behaviourChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><strong>Recent Logs</strong></div>
+            <table class="table mb-0">
+                <thead><tr><th>Time</th><th>Student</th><th>Subject</th><th>Behaviour</th><th>Confidence</th></tr></thead>
+                <tbody>
+                {% for l in logs %}
+                    <tr>
+                        <td>{{ l.timestamp|date:"d M H:i" }}</td>
+                        <td>{{ l.student.name|default:"-" }}</td>
+                        <td>{{ l.subject.name|default:"-" }}</td>
+                        <td>
+                            {% if l.behaviour == 'PHONE' %}
+                                <span class="badge bg-warning">Phone</span>
+                            {% elif l.behaviour == 'SLEEP' %}
+                                <span class="badge bg-danger">Sleeping</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ l.get_behaviour_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ l.confidence|floatformat:2 }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted p-4">No behaviour logs.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+const ctx = document.getElementById('behaviourChart');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: [{% for s in summary %}'{{ s.behaviour }}',{% endfor %}],
+        datasets: [{
+            data: [{% for s in summary %}{{ s.c }},{% endfor %}],
+            backgroundColor: ['#f59e0b', '#ef4444', '#3b82f6', '#10b981']
+        }]
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

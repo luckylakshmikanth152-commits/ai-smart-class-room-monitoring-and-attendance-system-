@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Classroom{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background: #f4f6f9; }
+        .sidebar {
+            min-height: 100vh; background: #1e293b; color: #fff; padding-top: 20px;
+        }
+        .sidebar a {
+            color: #cbd5e1; padding: 12px 20px; display: block; text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #334155; color: #fff; border-left-color: #3b82f6;
+        }
+        .sidebar h4 { padding: 0 20px 20px; border-bottom: 1px solid #334155; }
+        .stat-card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .stat-card .icon { font-size: 2.5rem; opacity: 0.7; }
+        .navbar-brand { font-weight: 600; }
+    </style>
+</head>
+<body>
+{% if user.is_authenticated %}
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 sidebar p-0">
+            <h4><i class="bi bi-mortarboard-fill"></i> Smart Classroom</h4>
+            <a href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a href="{% url 'live' %}"><i class="bi bi-camera-video-fill"></i> Live Monitor</a>
+            <a href="{% url 'student_list' %}"><i class="bi bi-people-fill"></i> Students</a>
+            <a href="{% url 'faculty_list' %}"><i class="bi bi-person-badge"></i> Faculty</a>
+            <a href="{% url 'timetable' %}"><i class="bi bi-calendar-week"></i> Timetable</a>
+            <a href="{% url 'attendance_report' %}"><i class="bi bi-clipboard-check"></i> Attendance Report</a>
+            <a href="{% url 'behaviour_report' %}"><i class="bi bi-graph-up"></i> Behaviour Report</a>
+            <a href="/admin/"><i class="bi bi-gear"></i> Admin Panel</a>
+            <a href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout ({{ user.username }})</a>
+        </nav>
+        <main class="col-md-10 p-4">
+            {% if messages %}
+                {% for m in messages %}
+                    <div class="alert alert-{{ m.tags|default:'info' }} alert-dismissible fade show">
+                        {{ m }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% else %}
+    {% block fullpage %}{% endblock %}
+{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

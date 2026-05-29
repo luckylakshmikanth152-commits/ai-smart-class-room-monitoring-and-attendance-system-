@@ -1,0 +1,106 @@
+{% extends 'attendance/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card text-bg-primary">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="small">Students</div>
+                    <h3 class="mb-0">{{ total_students }}</h3>
+                </div>
+                <i class="bi bi-people-fill icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card text-bg-success">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="small">Faculty</div>
+                    <h3 class="mb-0">{{ total_faculty }}</h3>
+                </div>
+                <i class="bi bi-person-badge icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card text-bg-warning">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="small">Today's Attendance</div>
+                    <h3 class="mb-0">{{ today_attendance }}</h3>
+                </div>
+                <i class="bi bi-clipboard-check icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card text-bg-danger">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="small">Behaviour Alerts</div>
+                    <h3 class="mb-0">{{ today_behaviour }}</h3>
+                </div>
+                <i class="bi bi-exclamation-triangle icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_class %}
+<div class="alert alert-info">
+    <strong><i class="bi bi-broadcast"></i> Class in session:</strong>
+    {{ current_class.subject.name }} by {{ current_class.faculty.name }}
+    in {{ current_class.room }} ({{ current_class.start_time }} - {{ current_class.end_time }})
+    <a href="{% url 'live' %}" class="btn btn-sm btn-primary float-end">Open Live Monitor</a>
+</div>
+{% endif %}
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><strong>Recent Attendance</strong></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Student</th><th>Subject</th><th>Time</th></tr></thead>
+                    <tbody>
+                    {% for a in recent_attendance %}
+                        <tr>
+                            <td>{{ a.student.name }}</td>
+                            <td>{{ a.subject.name }}</td>
+                            <td>{{ a.time|time:"H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted p-3">No records</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><strong>Recent Behaviour Logs</strong></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Student</th><th>Behaviour</th><th>Time</th></tr></thead>
+                    <tbody>
+                    {% for b in recent_behaviour %}
+                        <tr>
+                            <td>{{ b.student.name|default:"-" }}</td>
+                            <td><span class="badge bg-warning">{{ b.get_behaviour_display }}</span></td>
+                            <td>{{ b.timestamp|date:"H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted p-3">No records</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
